@@ -87,7 +87,7 @@
     (ok {
         portfolio-id: portfolio-id,
         total-value: total-value,
-        needs-rebalance: (> (- block-height (get last-rebalanced portfolio)) u144) ;; 24 hours in blocks
+        needs-rebalance: (> (- stacks-block-height (get last-rebalanced portfolio)) u144) ;; 24 hours in blocks
     }))
 )
 
@@ -161,8 +161,8 @@
     (map-set Portfolios portfolio-id
         {
             owner: tx-sender,
-            created-at: block-height,
-            last-rebalanced: block-height,
+            created-at: stacks-block-height,
+            last-rebalanced: stacks-block-height,
             total-value: u0,
             active: true,
             token-count: token-count
@@ -203,7 +203,7 @@
     
     ;; Update last rebalanced timestamp
     (map-set Portfolios portfolio-id
-        (merge portfolio {last-rebalanced: block-height})
+        (merge portfolio {last-rebalanced: stacks-block-height})
     )
     
     (ok true))
