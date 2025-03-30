@@ -34,3 +34,47 @@
 (define-data-var protocol-owner principal tx-sender)
 (define-data-var portfolio-counter uint u0)
 (define-data-var protocol-fee uint u25) ;; 0.25% represented as basis points
+
+;; Constants
+(define-constant MAX-TOKENS-PER-PORTFOLIO u10)
+(define-constant BASIS-POINTS u10000)
+
+;; Data Maps
+(define-map Portfolios
+    uint ;; portfolio-id
+    {
+        owner: principal,
+        created-at: uint,
+        last-rebalanced: uint,
+        total-value: uint,
+        active: bool,
+		token-count: uint
+    }
+)
+
+(define-map PortfolioAssets
+    {portfolio-id: uint, token-id: uint}
+    {
+        target-percentage: uint,
+        current-amount: uint,
+        token-address: principal
+    }
+)
+
+(define-map UserPortfolios
+    principal
+    (list 20 uint)
+)
+
+;; Read-only functions
+(define-read-only (get-portfolio (portfolio-id uint))
+    (map-get? Portfolios portfolio-id)
+)
+
+(define-read-only (get-portfolio-asset (portfolio-id uint) (token-id uint))
+    (map-get? PortfolioAssets {portfolio-id: portfolio-id, token-id: token-id})
+)
+
+(define-read-only (get-user-portfolios (user principal))
+    (default-to (list) (map-get? UserPortfolios user))
+)
